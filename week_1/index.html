@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TODO LIST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <style>
+    body {
+      margin: 0 auto;
+      padding: 0;
+      height: 100vh;
+      width: 36rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 200px 200px;
+      margin-right: 24px;
+      margin-left: 24px;
+    }
+
+    .header {
+      grid-column: 1 / span 2;
+      grid-row: 1;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    h2 {
+      margin: 64px 0px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      height: 1.25rem;
+      border: 1px solid black;
+    }
+
+    input::placeholder {
+      color: gray;
+      font-style: italic;
+    }
+
+    p {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #todolist,
+    #donelist {
+      padding: 8px;
+    }
+  </style>
+  <script>
+    window.onload = () => {
+      document.getElementById("input").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          const todoText = event.target.value;
+          if (todoText.trim() !== "") {
+            const p = document.createElement("p");
+            p.textContent = todoText;
+            document.getElementById("todolist").appendChild(p);
+
+            const b = document.createElement("button");
+            b.id = "clear";
+            b.innerHTML = "완료";
+            p.appendChild(b);
+            b.addEventListener("click", (event) => {
+              document.getElementById("todolist").removeChild(p);
+
+              const a = document.createElement("p");
+              a.id = "done";
+              document.getElementById("donelist").append(a);
+              a.textContent = todoText;
+              const d = document.createElement("button");
+              d.innerHTML = "삭제";
+              a.append(d);
+              d.addEventListener("click", (event) => {
+                document.getElementById("donelist").removeChild(a);
+              });
+            });
+
+            event.target.value = "";
+          }
+        }
+      });
+    };
+  </script>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>UMC Study Plan</h2>
+        <input id="input" placeholder="스터디 계획을 작성해보세요!" />
+      </div>
+      <div id="todolist">
+        <h3>해야할 일</h3>
+      </div>
+      <div id="donelist">
+        <h3>해낸 일</h3>
+      </div>
+    </div>
+  </body>
+</html>
