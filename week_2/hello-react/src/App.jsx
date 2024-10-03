@@ -1,5 +1,7 @@
 import { useReducer } from "react";
 import "./App.css";
+import Button from "./Button";
+import { Input } from "./Input";
 
 export default function TodoList() {
   const [state, dispatch] = useReducer((state, action) => {
@@ -66,7 +68,7 @@ export default function TodoList() {
   return (
     <div className="main">
       <div className="inputBox">
-        <input
+        <Input
           value={state?.draft || ""}
           onChange={(e) => {
             dispatch({
@@ -99,23 +101,23 @@ export default function TodoList() {
             </span>
             <div>
               {item?.isEditing ? (
-                <button
+                <Button
                   className="edit"
                   onClick={() => dispatch({ type: "doneEdit", id: item?.id })}
                 >
                   완료
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   className="edit"
                   onClick={() => dispatch({ type: "startEdit", id: item?.id })}
                 >
                   수정
-                </button>
+                </Button>
               )}
-              <button className="remove" onClick={() => dispatch({ type: "delete", id: item?.id })}>
+              <Button className="remove" onClick={() => dispatch({ type: "delete", id: item?.id })}>
                 삭제
-              </button>
+              </Button>
             </div>
           </li>
         ))}
