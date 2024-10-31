@@ -3,49 +3,33 @@ import axios from "axios";
 import styled from "styled-components";
 import Card from "../components/card";
 import { useParams } from "react-router-dom";
+import useCustomFetch from "../hooks/useCustomFetch";
 
 export default function MovieCategory() {
   const { category } = useParams();
 
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    const getMovies = async () => {
-      let query;
-
+  const { isLoading, data, error } = useCustomFetch(
+    ((category) => {
       switch (category) {
         case "now-playing":
-          query = `https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1`;
-          break;
+          return "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1";
 
         case "popular":
-          query = `https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1`;
-          break;
+          return "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1";
 
         case "top-rated":
-          query = "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=1";
-          break;
+          return "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=1";
 
         case "up-coming":
-          query = "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=1";
-          break;
+          return "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=1";
       }
-
-      const movies = await axios.get(query, {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_MOVIE_API_TOKEN}`,
-        },
-      });
-
-      setMovies(movies?.data?.results);
-    };
-
-    if (category) getMovies();
-  }, [category]);
+    })(category)
+  );
 
   return (
     <Wrapper>
-      {movies?.map((movie, i) => (
+      {isLoading && <span>Loading...</span>}
+      {data?.results?.map((movie, i) => (
         <Card key={movie?.id} movie={movie} />
       ))}
     </Wrapper>

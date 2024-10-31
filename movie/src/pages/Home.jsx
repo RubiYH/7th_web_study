@@ -2,29 +2,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Card from "../components/card";
+import useCustomFetch from "../hooks/useCustomFetch";
 
 export default function Home() {
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    const getMovies = async () => {
-      const movies = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1`,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_MOVIE_API_TOKEN}`,
-          },
-        }
-      );
-      setMovies(movies?.data?.results);
-    };
-
-    getMovies();
-  }, []);
+  const { isLoading, data, error } = useCustomFetch("/movie/popular?language=ko-KR&page=1");
 
   return (
     <Wrapper>
-      {movies?.map((movie, i) => (
+      {isLoading && <span>Loading...</span>}
+      {data?.results?.map((movie, i) => (
         <Card key={movie?.id} movie={movie} />
       ))}
     </Wrapper>

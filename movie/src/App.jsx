@@ -10,6 +10,7 @@ import Search from "./pages/Search.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import MovieCategory from "./pages/MovieCategory.jsx";
+import MovieDetail from "./pages/MovieDetail.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,13 +24,17 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "movies/:category",
+        path: "movies/category/:category",
         element: <MovieCategory />,
       },
       {
         // 3. 부모의 path가 '/'이니, /를 붙이지 않아도 /movies랑 동일하게 동작한다.
         path: "movies",
         element: <Movies />,
+      },
+      {
+        path: "movies/movie/:movieId",
+        element: <MovieDetail />,
       },
       {
         path: "search",

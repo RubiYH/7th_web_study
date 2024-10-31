@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Card = ({ movie }) => {
   return (
-    <StyledCard>
+    <StyledCard to={`/movies/movie/${movie?.id}`}>
       <StyledImage src={`https://image.tmdb.org/t/p/original/${movie?.poster_path}`} />
       <CardText bold="true">{movie?.title}</CardText>
       <CardText>{movie?.release_date}</CardText>
@@ -10,13 +11,15 @@ const Card = ({ movie }) => {
   );
 };
 
-const StyledCard = styled.div`
+const StyledCard = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: start;
   gap: 0.5rem;
   border-radius: 1rem;
   overflow: hidden;
+  text-decoration: none;
+  color: white;
 `;
 
 const CardText = styled.span`
