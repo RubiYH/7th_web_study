@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import "./App.css";
-import Button from "./Button";
-import { Input } from "./Input";
+import { Button } from "./components/Button";
+import { Input } from "./components/Input";
 
 export default function TodoList() {
   const [state, dispatch] = useReducer((state, action) => {
@@ -87,8 +87,8 @@ export default function TodoList() {
         </button>
       </div>
       <ul className="todo">
-        {state?.todos?.map((item) => (
-          <li key={item?.id}>
+        {state?.todos?.map((item, index) => (
+          <li key={index}>
             <span
               contentEditable={item?.isEditing === true}
               suppressContentEditableWarning
