@@ -21,13 +21,17 @@ export default function Login() {
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = (data) => {
     console.log(data);
   };
 
-  console.log(errors);
+  // console.log(errors);
 
   return (
     <div
@@ -45,9 +49,20 @@ export default function Login() {
         onSubmit={handleSubmit(onSubmit)}
         style={{ display: "flex", flexDirection: "column", gap: "16px", width: "16rem" }}
       >
-        <Input type="email" {...register("email")} onBlur={() => trigger("email")} />
+        <Input
+          type="email"
+          {...register("email")}
+          onBlur={() => trigger("email")}
+          autoComplete="off"
+          $error={errors?.email}
+        />
         {errors?.email && <ErrorMessage>{errors?.email?.message}</ErrorMessage>}
-        <Input type="password" {...register("password")} onBlur={() => trigger("password")} />
+        <Input
+          type="password"
+          {...register("password")}
+          onBlur={() => trigger("password")}
+          $error={errors?.password}
+        />
         {errors?.password && <ErrorMessage>{errors?.password?.message}</ErrorMessage>}
         <Button type="submit" disabled={!isValid}>
           로그인
@@ -61,6 +76,12 @@ const Input = styled.input`
   padding: 8px 16px 8px 16px;
   height: 2.5rem;
   border-radius: 32px;
+  outline: none;
+  border: ${(props) => (props?.$error ? "2px solid red" : "none")};
+
+  &:focus {
+    border: ${(props) => (props?.$error ? "2px solid skyblue" : "none")};
+  }
 `;
 
 const ErrorMessage = styled.p`
