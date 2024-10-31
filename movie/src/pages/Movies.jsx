@@ -6,10 +6,10 @@ export default function Movies() {
     <Wrapper>
       <Header>카테고리</Header>
       <CategoryWrapper>
-        <Category to="/movies/now-playing">현재 상영중인</Category>
-        <Category to="/movies/popular">인기있는</Category>
-        <Category to="/movies/top-rated">높은 평가를 받은</Category>
-        <Category to="/movies/up-coming">개봉 예정중인</Category>
+        <Category to="/movies/category/now-playing">현재 상영중인</Category>
+        <Category to="/movies/category/popular">인기있는</Category>
+        <Category to="/movies/category/top-rated">높은 평가를 받은</Category>
+        <Category to="/movies/category/up-coming">개봉 예정중인</Category>
       </CategoryWrapper>
     </Wrapper>
   );
