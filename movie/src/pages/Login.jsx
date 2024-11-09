@@ -2,6 +2,10 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { axiosBackendInstance } from "../lib/api";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const schema = yup.object().shape({
   email: yup.string().email("올바른 이메일 형식 아닙니다.").required("이메일을 입력하세요."),
@@ -13,6 +17,8 @@ const schema = yup.object().shape({
 });
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -27,8 +33,26 @@ export default function Login() {
     },
   });
 
-  const onSubmit = (data) => {
+  const [, setUser] = useContext(UserContext);
+
+  const onSubmit = async (data) => {
     console.log(data);
+
+    try {
+      const response = await axiosBackendInstance.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      window.localStorage.setItem("accessToken", response.data?.accessToken);
+      window.localStorage.setItem("refreshToken", response.data?.refreshToken);
+
+      setUser({ isLoggedIn: true });
+
+      navigate("/", { replace: true });
+    } catch (err) {
+      alert(err);
+    }
   };
 
   // console.log(errors);
