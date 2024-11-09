@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { axiosInstance } from "../lib/api";
+import { axiosMovieInstance } from "../lib/api";
 
 export default function useCustomFetch(url) {
   const [isLoading, setIsLoading] = useState(true);
@@ -9,7 +9,7 @@ export default function useCustomFetch(url) {
   useEffect(() => {
     (async (url) => {
       try {
-        const response = await axiosInstance.get(url);
+        const response = await axiosMovieInstance.get(url);
 
         setData(response.data);
       } catch (err) {
