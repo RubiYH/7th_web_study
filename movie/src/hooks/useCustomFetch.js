@@ -8,6 +8,8 @@ export default function useCustomFetch(url) {
 
   useEffect(() => {
     (async (url) => {
+      setIsLoading(true);
+
       try {
         const response = await axiosMovieInstance.get(url);
 
