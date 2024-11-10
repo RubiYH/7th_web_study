@@ -12,6 +12,7 @@ const Card = ({ movie }) => {
 };
 
 const StyledCard = styled(Link)`
+  width: 128px;
   display: flex;
   flex-direction: column;
   align-items: start;
