@@ -4,83 +4,57 @@ import styled from "styled-components";
 import Card from "../components/card";
 import { useParams } from "react-router-dom";
 import useCustomFetch from "../hooks/useCustomFetch";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { axiosMovieInstance } from "../lib/api";
 import { useInView } from "react-intersection-observer";
 
 export default function MovieCategory() {
   const { category } = useParams();
 
-  const { ref, inView, entry } = useInView({
-    threshold: 0,
-  });
+  const [page, setPage] = useState(1);
 
-  const { isLoading, data, error, hasNextPage, fetchNextPage, isFetched } = useInfiniteQuery({
-    queryFn: ({ pageParam }) =>
+  const { isLoading, data, error, fetchNextPage } = useQuery({
+    queryFn: () =>
       axiosMovieInstance
         .get(
-          ((category, pageParam) => {
+          ((category, page) => {
             switch (category) {
               case "now-playing":
-                return (
-                  "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=" + pageParam
-                );
+                return "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=" + page;
 
               case "popular":
-                return (
-                  "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=" + pageParam
-                );
+                return "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=" + page;
 
               case "top-rated":
-                return (
-                  "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=" + pageParam
-                );
+                return "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=" + page;
 
               case "up-coming":
-                return (
-                  "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=" + pageParam
-                );
+                return "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=" + page;
             }
-          })(category, pageParam)
+          })(category, page)
         )
         .then((res) => res.data),
-    queryKey: ["category", category],
+    queryKey: ["category", category, page],
     enabled: !!category,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      const lastMovie = lastPage.results[lastPage.results.length - 1];
-
-      return lastMovie ? allPages.length + 1 : undefined;
-    },
+    placeholderData: keepPreviousData,
   });
-
-  useEffect(() => {
-    if (isFetched && inView && hasNextPage) fetchNextPage();
-  }, [inView, hasNextPage, isFetched]);
 
   return (
     <div style={{ flex: 1 }}>
       <Wrapper>
         {isLoading && <span>Loading...</span>}
-        {data?.pages?.map((page) =>
-          page.results.map((movie) => <Card key={movie?.id} movie={movie} />)
-        )}
+        {data?.results.map((movie) => (
+          <Card key={movie?.id} movie={movie} />
+        ))}
       </Wrapper>
-      <div ref={ref}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M10.72,19.9a8,8,0,0,1-6.5-9.79A7.77,7.77,0,0,1,10.4,4.16a8,8,0,0,1,9.49,6.52A1.54,1.54,0,0,0,21.38,12h.13a1.37,1.37,0,0,0,1.38-1.54,11,11,0,1,0-12.7,12.39A1.54,1.54,0,0,0,12,21.34h0A1.47,1.47,0,0,0,10.72,19.9Z"
-          >
-            <animateTransform
-              attributeName="transform"
-              dur="0.75s"
-              repeatCount="indefinite"
-              type="rotate"
-              values="0 12 12;360 12 12"
-            />
-          </path>
-        </svg>
+      <div style={{ padding: "8px", display: "flex", justifyContent: "space-between" }}>
+        <Button onClick={() => setPage((prev) => prev - 1)} disabled={page === 1}>
+          이전
+        </Button>
+        <span>{page}</span>
+        <Button onClick={() => setPage((prev) => prev + 1)} disabled={page === data?.total_pages}>
+          다음
+        </Button>
       </div>
     </div>
   );
@@ -93,4 +67,22 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+`;
+
+const Button = styled.button`
+  padding: 8px 16px 8px 16px;
+  height: 2.5rem;
+  border-radius: 32px;
+  color: white;
+  background: #e31b64;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+
+  &:hover {
+    background: #b80f4c;
+  }
+
+  &:disabled {
+    background: gray;
+  }
 `;
