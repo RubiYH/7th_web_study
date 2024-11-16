@@ -4,28 +4,36 @@ import styled from "styled-components";
 import Card from "../components/card";
 import { useParams } from "react-router-dom";
 import useCustomFetch from "../hooks/useCustomFetch";
+import { useQuery } from "@tanstack/react-query";
+import { axiosMovieInstance } from "../lib/api";
 
 export default function MovieCategory() {
   const { category } = useParams();
 
-  const { isLoading, data, error } = useCustomFetch(
-    ((category) => {
-      switch (category) {
-        case "now-playing":
-          return "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1";
+  const { isLoading, data, error } = useQuery({
+    queryFn: () =>
+      axiosMovieInstance
+        .get(
+          ((category) => {
+            switch (category) {
+              case "now-playing":
+                return "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1";
 
-        case "popular":
-          return "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1";
+              case "popular":
+                return "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1";
 
-        case "top-rated":
-          return "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=1";
+              case "top-rated":
+                return "https://api.themoviedb.org/3/movie/top_rated?language=ko-KR&page=1";
 
-        case "up-coming":
-          return "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=1";
-      }
-    })(category)
-  );
-
+              case "up-coming":
+                return "https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=1";
+            }
+          })(category)
+        )
+        .then((res) => res.data),
+    queryKey: ["category", category],
+    enabled: !!category,
+  });
   return (
     <Wrapper>
       {isLoading && <span>Loading...</span>}

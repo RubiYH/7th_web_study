@@ -2,16 +2,27 @@ import styled, { keyframes } from "styled-components";
 import { useDebounce } from "../hooks/useDebounce";
 import { useEffect, useState } from "react";
 import useCustomFetch from "../hooks/useCustomFetch";
+import { useQuery } from "@tanstack/react-query";
 import Card from "../components/card";
+import { axiosMovieInstance } from "../lib/api";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState(null);
 
   const debouncedSearch = useDebounce(searchQuery, 1000);
 
-  const { data, isLoading, error } = useCustomFetch(
-    `/search/movie?&language=ko-KR${debouncedSearch ? `&query=${debouncedSearch}` : ""}&page=1`
-  );
+  const { data, isLoading, error } = useQuery({
+    queryFn: () =>
+      axiosMovieInstance
+        .get(
+          `/search/movie?&language=ko-KR${
+            debouncedSearch ? `&query=${debouncedSearch}` : ""
+          }&page=1`
+        )
+        .then((res) => res.data),
+    queryKey: ["search", debouncedSearch],
+    enabled: !!debouncedSearch,
+  });
 
   return (
     <Wrapper>

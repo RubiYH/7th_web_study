@@ -1,13 +1,20 @@
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import useCustomFetch from "../hooks/useCustomFetch";
+import { useQuery } from "@tanstack/react-query";
+import { axiosMovieInstance } from "../lib/api";
 
 export default function MovieDetail() {
   const { movieId } = useParams();
 
-  const { isLoading, data, error } = useCustomFetch(
-    `/movie/${movieId}?language=ko-KR&append_to_response=credits`
-  );
+  const { isLoading, data, error } = useQuery({
+    queryFn: () =>
+      axiosMovieInstance
+        .get(`/movie/${movieId}?language=ko-KR&append_to_response=credits`)
+        .then((res) => res.data),
+    queryKey: ["detail", movieId],
+    enabled: !!movieId,
+  });
 
   return (
     <Wrapper>
