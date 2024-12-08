@@ -3,9 +3,15 @@ import axios from "axios";
 import styled from "styled-components";
 import Card from "../components/card";
 import useCustomFetch from "../hooks/useCustomFetch";
+import { useQuery } from "@tanstack/react-query";
+import { axiosMovieInstance } from "../lib/api";
 
 export default function Home() {
-  const { isLoading, data, error } = useCustomFetch("/movie/popular?language=ko-KR&page=1");
+  const { isLoading, data, error } = useQuery({
+    queryFn: () =>
+      axiosMovieInstance.get("/movie/popular?language=ko-KR&page=1").then((res) => res.data),
+    queryKey: ["home"],
+  });
 
   return (
     <Wrapper>
