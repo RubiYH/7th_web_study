@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { axiosInstance } from "../utils/api";
 import { Link } from "react-router-dom";
+import { useDebounce } from "../hooks/useDebounce";
 
 export const Todo = ({ id, title, content, checked }) => {
   const queryClient = useQueryClient();
@@ -27,6 +28,16 @@ export const Todo = ({ id, title, content, checked }) => {
   const [titleValue, setTitleValue] = useState(title);
   const [contentValue, setContentValue] = useState(content);
 
+  const [isChecked, setIsChecked] = useState(undefined);
+
+  const useDebouncedCheck = useDebounce(isChecked, 1000);
+
+  useEffect(() => {
+    if (isChecked !== undefined) {
+      mutateTodo({ checked: isChecked });
+    }
+  }, [useDebouncedCheck]);
+
   return (
     <ToDo>
       <div
@@ -40,8 +51,8 @@ export const Todo = ({ id, title, content, checked }) => {
       >
         <input
           type="checkbox"
-          checked={checked}
-          onChange={(e) => mutateTodo({ checked: e.target.checked })}
+          defaultChecked={checked}
+          onChange={(e) => setIsChecked(e.target.checked)}
         />
         <Content>
           <Link to={`/todo/${id}`} onClick={(e) => (isEditing ? e.preventDefault() : undefined)}>
